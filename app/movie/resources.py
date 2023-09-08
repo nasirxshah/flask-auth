@@ -6,14 +6,12 @@ from app.movie.models import Movie
 
 
 class MovieList(Resource):
-    @jwt_required()
     def get(self):
         movies = Movie.objects().to_json()
         return Response(movies, mimetype="application/json", status=200)
 
-    @jwt_required(fresh=True)
+    @jwt_required()
     def post(self):
-        # verify_jwt_in_request()
         body = request.get_json()
         movie = Movie(**body).save()
         id = movie.id
@@ -21,11 +19,13 @@ class MovieList(Resource):
 
 
 class MovieDetail(Resource):
+    @jwt_required()
     def put(self, id):
         body = request.get_json()
         Movie.objects.get(id=id).update(**body)
         return '', 200
 
+    @jwt_required()
     def delete(self, id):
         movie = Movie.objects.get(id=id).delete()
         return '', 200
